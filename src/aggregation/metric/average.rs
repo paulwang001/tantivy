@@ -1,5 +1,6 @@
 use std::fmt::Debug;
 
+use bincode::{Encode, Decode};
 use serde::{Deserialize, Serialize};
 
 use crate::aggregation::f64_from_fastfield_u64;
@@ -7,7 +8,7 @@ use crate::fastfield::{DynamicFastFieldReader, FastFieldReader};
 use crate::schema::Type;
 use crate::DocId;
 
-#[derive(Clone, Debug, PartialEq, Serialize, Deserialize)]
+#[derive(Clone, Debug, PartialEq, Serialize, Deserialize,Encode,Decode)]
 /// A single-value metric aggregation that computes the average of numeric values that are
 /// extracted from the aggregated documents.
 /// Supported field types are u64, i64, and f64.

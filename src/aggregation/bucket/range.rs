@@ -1,6 +1,7 @@
 use std::fmt::Debug;
 use std::ops::Range;
 
+use bincode::{Encode, Decode};
 use serde::{Deserialize, Serialize};
 
 use crate::aggregation::agg_req_with_accessor::{
@@ -50,7 +51,7 @@ use crate::{DocId, TantivyError};
 ///     }
 /// }
 /// ```
-#[derive(Clone, Debug, PartialEq, Serialize, Deserialize)]
+#[derive(Clone, Debug, PartialEq, Serialize, Deserialize,Encode,Decode)]
 pub struct RangeAggregation {
     /// The field to aggregate on.
     pub field: String,
@@ -59,7 +60,7 @@ pub struct RangeAggregation {
     pub ranges: Vec<RangeAggregationRange>,
 }
 
-#[derive(Clone, Debug, PartialEq, Serialize, Deserialize)]
+#[derive(Clone, Debug, PartialEq, Serialize, Deserialize,Encode,Decode)]
 /// The range for one range bucket.
 pub struct RangeAggregationRange {
     /// The from range value, which is inclusive in the range.

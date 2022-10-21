@@ -1,5 +1,6 @@
 use std::fmt::Debug;
 
+use bincode::{Encode, Decode};
 use fnv::FnvHashMap;
 use itertools::Itertools;
 use serde::{Deserialize, Serialize};
@@ -64,7 +65,7 @@ use crate::{DocId, TantivyError};
 ///     }
 /// }
 /// ```
-#[derive(Clone, Debug, Default, PartialEq, Serialize, Deserialize)]
+#[derive(Clone, Debug, Default, PartialEq, Serialize, Deserialize,Encode,Decode)]
 pub struct TermsAggregation {
     /// The field to aggregate on.
     pub field: String,

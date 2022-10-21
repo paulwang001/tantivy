@@ -1,3 +1,4 @@
+use bincode::{Encode, Decode};
 use serde::{Deserialize, Serialize};
 
 use crate::aggregation::f64_from_fastfield_u64;
@@ -19,7 +20,7 @@ use crate::{DocId, TantivyError};
 ///  }
 /// ```
 
-#[derive(Clone, Debug, PartialEq, Serialize, Deserialize)]
+#[derive(Clone, Debug, PartialEq, Serialize, Deserialize,Encode,Decode)]
 pub struct StatsAggregation {
     /// The field name to compute the stats on.
     pub field: String,
@@ -37,7 +38,7 @@ impl StatsAggregation {
 }
 
 /// Stats contains a collection of statistics.
-#[derive(Clone, Debug, PartialEq, Serialize, Deserialize)]
+#[derive(Clone, Debug, PartialEq, Serialize, Deserialize,Encode,Decode)]
 pub struct Stats {
     /// The number of documents.
     pub count: usize,

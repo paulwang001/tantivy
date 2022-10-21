@@ -1,6 +1,7 @@
 use std::cmp::Ordering;
 use std::fmt::Display;
 
+use bincode::{Encode, Decode};
 use itertools::Itertools;
 use serde::{Deserialize, Serialize};
 
@@ -65,7 +66,7 @@ use crate::{DocId, TantivyError};
 /// Response
 /// See [BucketEntry](crate::aggregation::agg_result::BucketEntry)
 
-#[derive(Clone, Debug, Default, PartialEq, Serialize, Deserialize)]
+#[derive(Clone, Debug, Default, PartialEq, Serialize, Deserialize,Encode,Decode)]
 pub struct HistogramAggregation {
     /// The field to aggregate on.
     pub field: String,
@@ -154,7 +155,7 @@ impl HistogramAggregation {
 }
 
 /// Used to set extended or hard bounds on the histogram.
-#[derive(Clone, Copy, Debug, PartialEq, Serialize, Deserialize)]
+#[derive(Clone, Copy, Debug, PartialEq, Serialize, Deserialize,Encode,Decode)]
 pub struct HistogramBounds {
     /// The lower bounds.
     pub min: f64,

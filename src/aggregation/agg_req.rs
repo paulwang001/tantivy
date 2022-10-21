@@ -46,6 +46,7 @@
 
 use std::collections::{HashMap, HashSet};
 
+use bincode::{Encode, Decode};
 use serde::{Deserialize, Serialize};
 
 pub use super::bucket::RangeAggregation;
@@ -135,7 +136,7 @@ pub fn get_fast_field_names(aggs: &Aggregations) -> HashSet<String> {
 /// Aggregation request of [BucketAggregation] or [MetricAggregation].
 ///
 /// An aggregation is either a bucket or a metric.
-#[derive(Clone, Debug, PartialEq, Serialize, Deserialize)]
+#[derive(Clone, Debug, PartialEq, Serialize, Deserialize,Encode,Decode)]
 #[serde(untagged)]
 pub enum Aggregation {
     /// Bucket aggregation, see [BucketAggregation] for details.
@@ -169,7 +170,7 @@ impl Aggregation {
 /// aggregators, each with a different "bucketing" strategy. Some define a single bucket, some
 /// define fixed number of multiple buckets, and others dynamically create the buckets during the
 /// aggregation process.
-#[derive(Clone, Debug, PartialEq, Serialize, Deserialize)]
+#[derive(Clone, Debug, PartialEq, Serialize, Deserialize,Encode,Decode)]
 pub struct BucketAggregation {
     /// Bucket aggregation strategy to group documents.
     #[serde(flatten)]
@@ -196,7 +197,7 @@ impl BucketAggregation {
 }
 
 /// The bucket aggregation types.
-#[derive(Clone, Debug, PartialEq, Serialize, Deserialize)]
+#[derive(Clone, Debug, PartialEq, Serialize, Deserialize,Encode,Decode)]
 pub enum BucketAggregationType {
     /// Put data into buckets of user-defined ranges.
     #[serde(rename = "range")]
@@ -228,7 +229,7 @@ impl BucketAggregationType {
 /// Some aggregations output a single numeric metric (e.g. Average) and are called
 /// single-value numeric metrics aggregation, others generate multiple metrics (e.g. Stats) and are
 /// called multi-value numeric metrics aggregation.
-#[derive(Clone, Debug, PartialEq, Serialize, Deserialize)]
+#[derive(Clone, Debug, PartialEq, Serialize, Deserialize,Encode,Decode)]
 pub enum MetricAggregation {
     /// Calculates the average.
     #[serde(rename = "avg")]

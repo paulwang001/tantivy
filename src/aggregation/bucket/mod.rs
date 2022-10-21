@@ -13,6 +13,7 @@ mod term_agg;
 
 use std::collections::HashMap;
 
+use bincode::{Encode, Decode};
 pub(crate) use histogram::SegmentHistogramCollector;
 pub use histogram::*;
 pub(crate) use range::SegmentRangeCollector;
@@ -21,7 +22,7 @@ use serde::{de, Deserialize, Deserializer, Serialize, Serializer};
 pub use term_agg::*;
 
 /// Order for buckets in a bucket aggregation.
-#[derive(Clone, Copy, Debug, PartialEq, Serialize, Deserialize)]
+#[derive(Clone, Copy, Debug, PartialEq, Serialize, Deserialize,Encode,Decode)]
 pub enum Order {
     /// Asc order
     #[serde(rename = "asc")]
@@ -37,7 +38,7 @@ impl Default for Order {
     }
 }
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Clone, Debug, PartialEq,Encode,Decode)]
 /// Order property by which to apply the order
 pub enum OrderTarget {
     /// The key of the bucket
@@ -84,7 +85,7 @@ impl ToString for OrderTarget {
 /// { "_count": "asc" }
 /// { "_key": "asc" }
 /// { "average_price": "asc" }
-#[derive(Clone, Default, Debug, PartialEq)]
+#[derive(Clone, Default, Debug, PartialEq,Encode,Decode)]
 pub struct CustomOrder {
     /// The target property by which to sort by
     pub target: OrderTarget,

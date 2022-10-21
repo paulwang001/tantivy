@@ -5,13 +5,14 @@
 mod average;
 mod stats;
 pub use average::*;
+use bincode::{Encode, Decode};
 use serde::{Deserialize, Serialize};
 pub use stats::*;
 
 /// Single-metric aggregations use this common result structure.
 ///
 /// Main reason to wrap it in value is to match elasticsearch output structure.
-#[derive(Clone, Debug, PartialEq, Serialize, Deserialize)]
+#[derive(Clone, Debug, PartialEq, Serialize, Deserialize,Encode,Decode)]
 pub struct SingleMetricResult {
     /// The value of the single value metric.
     pub value: Option<f64>,

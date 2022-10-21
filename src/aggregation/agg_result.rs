@@ -8,7 +8,7 @@ use std::cmp::Ordering;
 use std::collections::HashMap;
 
 use serde::{Deserialize, Serialize};
-
+use bincode::{Encode,Decode};
 use super::agg_req::{
     Aggregations, AggregationsInternal, BucketAggregationInternal, MetricAggregation,
 };
@@ -21,7 +21,7 @@ use super::metric::{SingleMetricResult, Stats};
 use super::{Key, VecWithNames};
 use crate::TantivyError;
 
-#[derive(Clone, Default, Debug, PartialEq, Serialize, Deserialize)]
+#[derive(Clone, Default, Debug, PartialEq, Serialize, Deserialize,Encode,Decode)]
 /// The final aggegation result.
 pub struct AggregationResults(pub HashMap<String, AggregationResult>);
 
@@ -135,7 +135,7 @@ fn add_coverted_final_buckets_to_result(
     Ok(())
 }
 
-#[derive(Clone, Debug, PartialEq, Serialize, Deserialize)]
+#[derive(Clone, Debug, PartialEq, Serialize, Deserialize,Encode,Decode)]
 #[serde(untagged)]
 /// An aggregation is either a bucket or a metric.
 pub enum AggregationResult {
@@ -162,7 +162,7 @@ impl AggregationResult {
     }
 }
 
-#[derive(Clone, Debug, PartialEq, Serialize, Deserialize)]
+#[derive(Clone, Debug, PartialEq, Serialize, Deserialize,Encode,Decode)]
 #[serde(untagged)]
 /// MetricResult
 pub enum MetricResult {
@@ -194,7 +194,7 @@ impl From<IntermediateMetricResult> for MetricResult {
 }
 
 /// BucketEntry holds bucket aggregation result types.
-#[derive(Clone, Debug, PartialEq, Serialize, Deserialize)]
+#[derive(Clone, Debug, PartialEq, Serialize, Deserialize,Encode,Decode)]
 #[serde(untagged)]
 pub enum BucketResult {
     /// This is the range entry for a bucket, which contains a key, count, from, to, and optionally
@@ -301,7 +301,7 @@ impl BucketResult {
 ///    ...
 /// }
 /// ```
-#[derive(Clone, Debug, PartialEq, Serialize, Deserialize)]
+#[derive(Clone, Debug, PartialEq, Serialize, Deserialize,Encode,Decode)]
 pub struct BucketEntry {
     /// The identifier of the bucket.
     pub key: Key,
@@ -368,7 +368,7 @@ impl GetDocCount for BucketEntry {
 ///    ...
 /// }
 /// ```
-#[derive(Clone, Debug, PartialEq, Serialize, Deserialize)]
+#[derive(Clone, Debug, PartialEq, Serialize, Deserialize,Encode,Decode)]
 pub struct RangeBucketEntry {
     /// The identifier of the bucket.
     pub key: Key,

@@ -164,6 +164,7 @@ mod segment_agg_result;
 use std::collections::HashMap;
 use std::fmt::Display;
 
+use bincode::{Encode, Decode};
 pub use collector::{
     AggregationCollector, AggregationSegmentCollector, DistributedAggregationCollector,
 };
@@ -261,7 +262,7 @@ impl<T: Clone> VecWithNames<T> {
 /// The serialized key is used in a HashMap.
 pub type SerializedKey = String;
 
-#[derive(Clone, Debug, PartialEq, Serialize, Deserialize, PartialOrd)]
+#[derive(Clone, Debug, PartialEq, Serialize, Deserialize, PartialOrd,Encode,Decode)]
 /// The key to identify a bucket.
 #[serde(untagged)]
 pub enum Key {
