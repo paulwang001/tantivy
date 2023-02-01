@@ -670,11 +670,11 @@ mod tests {
             index_writer.add_document(doc!(
                 text_field => "cool",
                 date_field => DateTime::from_utc(OffsetDateTime::from_unix_timestamp(1_546_300_800).unwrap()),
-                score_field => 1u64,
-                score_field_f64 => 1f64,
-                score_field_i64 => 1i64,
-                scores_field_i64 => 1i64,
-                scores_field_i64 => 2i64,
+                score_field => 10u64,
+                score_field_f64 => 10f64,
+                score_field_i64 => 10i64,
+                scores_field_i64 => 10i64,
+                scores_field_i64 => 20i64,
             ))?;
             index_writer.add_document(doc!(
                 text_field => "cool",
@@ -717,17 +717,17 @@ mod tests {
             index_writer.add_document(doc!(
                 text_field => "cool",
                 date_field => DateTime::from_utc(OffsetDateTime::from_unix_timestamp(1_546_300_800 + 86400 + 86400).unwrap()),
-                score_field => 14u64,
-                score_field_f64 => 14f64,
-                score_field_i64 => 14i64,
+                score_field => 54u64,
+                score_field_f64 => 54f64,
+                score_field_i64 => 54i64,
             ))?;
 
             index_writer.add_document(doc!(
                 text_field => "cool",
                 date_field => DateTime::from_utc(OffsetDateTime::from_unix_timestamp(1_546_300_800 + 86400 + 86400).unwrap()),
-                score_field => 44u64,
-                score_field_f64 => 44.5f64,
-                score_field_i64 => 44i64,
+                score_field => 45u64,
+                score_field_f64 => 45.5f64,
+                score_field_i64 => 45i64,
             ))?;
 
             index_writer.commit()?;

@@ -51,6 +51,10 @@ pub struct Stats {
     pub max: Option<f64>,
     /// The average of the values. `None` for count == 0.
     pub avg: Option<f64>,
+    /// Open
+    pub open: Option<f64>,
+    /// Close
+    pub close: Option<f64>,
 }
 
 impl Stats {
@@ -62,6 +66,8 @@ impl Stats {
             "min" => Ok(self.min),
             "max" => Ok(self.max),
             "avg" => Ok(self.avg),
+            "open" => Ok(self.open),
+            "close" => Ok(self.close),
             _ => Err(TantivyError::InvalidArgument(format!(
                 "unknown property {} on stats metric aggregation",
                 agg_property
@@ -78,6 +84,8 @@ pub struct IntermediateStats {
     squared_sum: f64,
     min: f64,
     max: f64,
+    open: f64,
+    close: f64,
 }
 impl Default for IntermediateStats {
     fn default() -> Self {
@@ -87,6 +95,8 @@ impl Default for IntermediateStats {
             squared_sum: 0.0,
             min: f64::MAX,
             max: f64::MIN,
+            open: f64::MIN,
+            close: f64::MIN,
         }
     }
 }
@@ -111,11 +121,15 @@ impl IntermediateStats {
 
     /// Merge data from other stats into this instance.
     pub fn merge_fruits(&mut self, other: IntermediateStats) {
+        if self.count == 0 {
+            self.open = other.open;
+        }
         self.count += other.count;
         self.sum += other.sum;
         self.squared_sum += other.squared_sum;
         self.min = self.min.min(other.min);
         self.max = self.max.max(other.max);
+        self.close = other.close;
     }
 
     /// compute final resultimprove_docs
@@ -130,6 +144,20 @@ impl IntermediateStats {
         } else {
             Some(self.max)
         };
+        let open = if self.count == 0 {
+            None
+        } else if self.open == f64::MIN {
+            None
+        } else {
+            Some(self.open)
+        };
+        let close = if self.count == 0 {
+            None
+        } else if self.close == f64::MIN {
+            None
+        } else {
+            Some(self.close)
+        };
         Stats {
             count: self.count,
             sum: self.sum,
@@ -137,6 +165,8 @@ impl IntermediateStats {
             min,
             max,
             avg: self.avg(),
+            open,
+            close,
         }
     }
 
@@ -147,6 +177,10 @@ impl IntermediateStats {
         self.squared_sum += value * value;
         self.min = self.min.min(value);
         self.max = self.max.max(value);
+        self.close = value;
+        if self.open == f64::MIN {
+            self.open = value;
+        }
     }
 }
 
@@ -310,6 +344,8 @@ mod tests {
             res["stats"],
             json!({
                 "avg": 12.142857142857142,
+                "close":Value::Null,
+                "open":Value::Null,
                 "count": 7,
                 "max": 44.0,
                 "min": 1.0,
@@ -325,6 +361,8 @@ mod tests {
                 "count": 7,
                 "max": 44.0,
                 "min": 1.0,
+                "close":Value::Null,
+                "open":Value::Null,
                 "standard_deviation": 13.65313748796613,
                 "sum": 85.0
             })
@@ -337,6 +375,8 @@ mod tests {
                 "count": 7,
                 "max": 44.5,
                 "min": 1.0,
+                "close":Value::Null,
+                "open":Value::Null,
                 "standard_deviation": 13.819905785437443,
                 "sum": 85.5
             })
@@ -349,6 +389,8 @@ mod tests {
                 "count": 3,
                 "max": 14.0,
                 "min": 7.0,
+                "close":Value::Null,
+                "open":Value::Null,
                 "standard_deviation": 2.867441755680877,
                 "sum": 32.0
             })
@@ -359,6 +401,8 @@ mod tests {
             json!({
                 "avg": serde_json::Value::Null,
                 "count": 0,
+                // "close":Value::Null,
+                "open":Value::Null,
                 "max": serde_json::Value::Null,
                 "min": serde_json::Value::Null,
                 "standard_deviation": serde_json::Value::Null,
