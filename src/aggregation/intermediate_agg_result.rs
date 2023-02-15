@@ -17,7 +17,7 @@ use super::bucket::{
     cut_off_buckets, get_agg_name_and_property, intermediate_histogram_buckets_to_final_buckets,
     GetDocCount, Order, OrderTarget, SegmentHistogramBucketEntry, TermsAggregation,
 };
-use super::metric::{IntermediateAverage, IntermediateStats};
+use super::metric::{IntermediateAverage, IntermediateDistinct, IntermediateStats};
 use super::segment_agg_result::SegmentMetricResultCollector;
 use super::{format_date, Key, SerializedKey, VecWithNames};
 use crate::aggregation::agg_result::{AggregationResults, BucketEntries, BucketEntry};
@@ -206,6 +206,8 @@ pub enum IntermediateAggregationResult {
 pub enum IntermediateMetricResult {
     /// Average containing intermediate average data result
     Average(IntermediateAverage),
+    /// Distinct containing intermediate average data result
+    Distinct(IntermediateDistinct),
     /// AverageData variant
     Stats(IntermediateStats),
 }
@@ -218,6 +220,9 @@ impl From<SegmentMetricResultCollector> for IntermediateMetricResult {
             }
             SegmentMetricResultCollector::Stats(collector) => {
                 IntermediateMetricResult::Stats(collector.stats)
+            }
+            SegmentMetricResultCollector::Distinct(collector)=>{
+                IntermediateMetricResult::Distinct(IntermediateDistinct::from_collector(collector))
             }
         }
     }
@@ -232,6 +237,9 @@ impl IntermediateMetricResult {
             MetricAggregation::Stats(_) => {
                 IntermediateMetricResult::Stats(IntermediateStats::default())
             }
+            MetricAggregation::Distinct(_)=>{
+                IntermediateMetricResult::Distinct(IntermediateDistinct::default())
+            }
         }
     }
     fn merge_fruits(&mut self, other: IntermediateMetricResult) {
@@ -245,6 +253,12 @@ impl IntermediateMetricResult {
             (
                 IntermediateMetricResult::Stats(stats_left),
                 IntermediateMetricResult::Stats(stats_right),
+            ) => {
+                stats_left.merge_fruits(stats_right);
+            }
+            (
+                IntermediateMetricResult::Distinct(stats_left),
+                IntermediateMetricResult::Distinct(stats_right),
             ) => {
                 stats_left.merge_fruits(stats_right);
             }

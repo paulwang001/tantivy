@@ -15,7 +15,8 @@ use super::bucket::{SegmentHistogramCollector, SegmentRangeCollector, SegmentTer
 use super::collector::MAX_BUCKET_COUNT;
 use super::intermediate_agg_result::{IntermediateAggregationResults, IntermediateBucketResult};
 use super::metric::{
-    AverageAggregation, SegmentAverageCollector, SegmentStatsCollector, StatsAggregation,
+    AverageAggregation, DistinctAggregation, SegmentAverageCollector, SegmentDistinctCollector,
+    SegmentStatsCollector, StatsAggregation,
 };
 use super::VecWithNames;
 use crate::aggregation::agg_req::BucketAggregationType;
@@ -165,6 +166,7 @@ impl SegmentAggregationResultsCollector {
 pub(crate) enum SegmentMetricResultCollector {
     Average(SegmentAverageCollector),
     Stats(SegmentStatsCollector),
+    Distinct(SegmentDistinctCollector),
 }
 
 impl SegmentMetricResultCollector {
@@ -173,6 +175,11 @@ impl SegmentMetricResultCollector {
             MetricAggregation::Average(AverageAggregation { field: _ }) => {
                 Ok(SegmentMetricResultCollector::Average(
                     SegmentAverageCollector::from_req(req.field_type),
+                ))
+            }
+            MetricAggregation::Distinct(DistinctAggregation { field: _ }) => {
+                Ok(SegmentMetricResultCollector::Distinct(
+                    SegmentDistinctCollector::from_req(req.field_type),
                 ))
             }
             MetricAggregation::Stats(StatsAggregation { field: _ }) => {
@@ -186,6 +193,9 @@ impl SegmentMetricResultCollector {
         match self {
             SegmentMetricResultCollector::Average(avg_collector) => {
                 avg_collector.collect_block(doc, &*metric.accessor);
+            }
+            SegmentMetricResultCollector::Distinct(distinct_collector) => {
+                distinct_collector.collect_block(doc, &*metric.accessor);
             }
             SegmentMetricResultCollector::Stats(stats_collector) => {
                 stats_collector.collect_block(doc, &*metric.accessor);

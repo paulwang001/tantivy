@@ -3,8 +3,10 @@
 //! The aggregations in this family compute metrics, see [super::agg_req::MetricAggregation] for
 //! details.
 mod average;
+mod distinct;
 mod stats;
 pub use average::*;
+pub use distinct::*;
 use serde::{Deserialize, Serialize};
 pub use stats::*;
 
